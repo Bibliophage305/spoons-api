@@ -576,7 +576,7 @@ class Venue(VenueSummary):
     contact_details: ContactDetails
     pricing: Pricing
     currency: Currency
-    facilities: list
+    facilities: list[str]
     opening_times: OpeningTimes
     payment_config: PaymentConfig
     menu_url: MenuURL

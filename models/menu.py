@@ -245,12 +245,60 @@ class Portion:
 
 @dataclass_validate
 @dataclass
+class Keyword:
+    type: str
+    name: str
+    id: str
+    label: str
+    value: str | bool | None
+    is_flag: bool
+    is_badge: bool
+    is_add_on: bool
+    tags: list[str]
+    icon: str | None
+    icon_url: str | None
+
+    @classmethod
+    def from_dict(cls, data: dict) -> "Keyword":
+        return cls(
+            type=data["type"],
+            name=data["name"],
+            id=data["id"],
+            label=data["label"],
+            value=data["value"],
+            is_flag=data["isFlag"],
+            is_badge=data["isBadge"],
+            is_add_on=data["isAddOn"],
+            tags=list(data["tags"].keys()) if data["tags"] else [],
+            icon=data["icon"] if "icon" in data else None,
+            icon_url=data["iconUrl"] if "iconUrl" in data else None,
+        )
+    
+    def to_dict(self) -> dict:
+        d = {
+            "type": self.type,
+            "name": self.name,
+            "id": self.id,
+            "label": self.label,
+            "value": self.value,
+            "isFlag": self.is_flag,
+            "isBadge": self.is_badge,
+            "isAddOn": self.is_add_on,
+            "tags": {tag: True for tag in self.tags} if self.tags else [],
+        }
+        if self.icon is not None:
+            d["icon"] = self.icon
+        if self.icon_url is not None:
+            d["iconUrl"] = self.icon_url
+        return d
+
+@dataclass_validate
+@dataclass
 class OptionsChoice:
     id: int
     name: str
     description: str
-    # TODO
-    keywords: list
+    keywords: list[Keyword]
     options: list[ProductItem]
 
     @classmethod
@@ -259,7 +307,7 @@ class OptionsChoice:
             id=data["id"],
             name=data["name"],
             description=data["description"],
-            keywords=data["keywords"],
+            keywords=[Keyword.from_dict(keyword) for keyword in data["keywords"]],
             options=[ProductItem.from_dict(option) for option in data["options"]],
         )
 
@@ -268,10 +316,202 @@ class OptionsChoice:
             "id": self.id,
             "name": self.name,
             "description": self.description,
-            "keywords": self.keywords,
+            "keywords": [keyword.to_dict() for keyword in self.keywords],
             "options": [option.to_dict() for option in self.options],
         }
 
+
+@dataclass_validate
+@dataclass
+class TillRequestOption:
+    label: str
+    value: str
+    parts: list[str]
+
+    @classmethod
+    def from_dict(cls, data: dict) -> "TillRequestOption":
+        return cls(
+            label=data["label"],
+            value=data["value"],
+            parts=data["parts"],
+        )
+
+    def to_dict(self) -> dict:
+        return {
+            "label": self.label,
+            "value": self.value,
+            "parts": self.parts,
+        }
+
+
+@dataclass_validate
+@dataclass
+class TillRequestFilter:
+    portion: list[str]
+
+    @classmethod
+    def from_dict(cls, data: dict) -> "TillRequestFilter":
+        return cls(
+            portion=data["portion"],
+        )
+
+    def to_dict(self) -> dict:
+        return {
+            "portion": self.portion,
+        }
+
+
+@dataclass_validate
+@dataclass
+class TillRequest:
+    id: int | str
+    name: str
+    question: str
+    required: bool
+    single_choice: bool
+    options: list[TillRequestOption]
+    products: list[int]
+    filter: TillRequestFilter
+    title: str
+    description: str
+
+    @classmethod
+    def from_dict(cls, data: dict) -> "TillRequest":
+        return cls(
+            id=data["id"],
+            name=data["name"],
+            question=data["question"],
+            required=data["required"],
+            single_choice=data["singleChoice"],
+            options=[TillRequestOption.from_dict(option) for option in data["options"]],
+            products=data["products"],
+            filter=TillRequestFilter.from_dict(data["filter"]),
+            title=data["title"],
+            description=data["description"],
+        )
+
+    def to_dict(self) -> dict:
+        return {
+            "id": self.id,
+            "name": self.name,
+            "question": self.question,
+            "required": self.required,
+            "singleChoice": self.single_choice,
+            "options": [option.to_dict() for option in self.options],
+            "products": self.products,
+            "filter": self.filter.to_dict(),
+            "title": self.title,
+            "description": self.description,
+        }
+
+
+@dataclass_validate
+@dataclass
+class TagOption:
+    label: str
+    value: str
+
+    @classmethod
+    def from_dict(cls, data: dict) -> "TagOption":
+        return cls(
+            label=data["label"],
+            value=data["value"],
+        )
+
+    def to_dict(self) -> dict:
+        return {
+            "label": self.label,
+            "value": self.value,
+        }
+
+
+@dataclass_validate
+@dataclass
+class Tag:
+    id: str
+    title: str
+    options: list[TagOption]
+    description: str
+    required: bool
+    single_choice: bool
+    sort_order: int
+
+    @classmethod
+    def from_dict(cls, data: dict) -> "Tag":
+        return cls(
+            id=data["id"],
+            title=data["title"],
+            options=[TagOption.from_dict(option) for option in data["options"]],
+            description=data["description"],
+            required=data["required"],
+            single_choice=data["singleChoice"],
+            sort_order=data["sortOrder"],
+        )
+
+    def to_dict(self) -> dict:
+        return {
+            "id": self.id,
+            "title": self.title,
+            "options": [option.to_dict() for option in self.options],
+            "description": self.description,
+            "required": self.required,
+            "singleChoice": self.single_choice,
+            "sortOrder": self.sort_order,
+        }
+
+
+@dataclass_validate
+@dataclass
+class AddOn:
+    id: int
+    name: str
+    hidden: bool
+    sort_order: int
+    item_groups: list[ItemGroup]
+    sub_categories: None
+
+    @classmethod
+    def from_dict(cls, data: dict) -> "AddOn":
+        return cls(
+            id=data["id"],
+            name=data["name"],
+            hidden=data["hidden"],
+            sort_order=data["sortOrder"],
+            item_groups=[ItemGroup.from_dict(item_group) for item_group in data["itemGroups"]],
+            sub_categories=data["subCategories"] or None,
+        )
+    
+    def to_dict(self) -> dict:
+        return {
+            "id": self.id,
+            "name": self.name,
+            "hidden": self.hidden,
+            "sortOrder": self.sort_order,
+            "itemGroups": [item_group.to_dict() for item_group in self.item_groups],
+            "subCategories": self.sub_categories or [],
+        }
+
+@dataclass_validate
+@dataclass
+class Linked:
+    menu_id: int
+    category_id: int
+    name: str
+
+    @classmethod
+    def from_dict(cls, data: dict) -> "Linked":
+        return cls(
+            menu_id=data["menuId"],
+            category_id=data["categoryId"],
+            name=data["name"],
+        )
+    
+    def to_dict(self) -> dict:
+        return {
+            "menuId": self.menu_id,
+            "categoryId": self.category_id,
+            "name": self.name,
+        }
 
 @dataclass_validate
 @dataclass
@@ -279,14 +519,10 @@ class Options:
     portion: Portion
     choices: list[OptionsChoice]
     swap: None
-    # TODO
-    till_requests: list
-    # TODO
-    tags: list
-    # TODO
-    add_ons: list
-    # TODO
-    linked: list
+    till_requests: list[TillRequest]
+    tags: list[Tag]
+    add_ons: list[AddOn]
+    linked: list[Linked]
 
     @classmethod
     def from_dict(cls, data: dict) -> "Options":
@@ -294,10 +530,10 @@ class Options:
             portion=Portion.from_dict(data["portion"]),
             choices=[OptionsChoice.from_dict(choice) for choice in data["choices"]],
             swap=data["swap"],
-            till_requests=data["tillRequests"],
-            tags=data["tags"],
-            add_ons=data["addOns"],
-            linked=data["linked"],
+            till_requests=[TillRequest.from_dict(tr) for tr in data["tillRequests"]],
+            tags=[Tag.from_dict(tag) for tag in data["tags"]],
+            add_ons=[AddOn.from_dict(add_on) for add_on in data["addOns"]],
+            linked=[Linked.from_dict(link) for link in data["linked"]],
         )
 
     def to_dict(self) -> dict:
@@ -305,10 +541,10 @@ class Options:
             "portion": self.portion.to_dict(),
             "choices": [choice.to_dict() for choice in self.choices],
             "swap": self.swap,
-            "tillRequests": self.till_requests,
-            "tags": self.tags,
-            "addOns": self.add_ons,
-            "linked": self.linked,
+            "tillRequests": [tr.to_dict() for tr in self.till_requests],
+            "tags": [tag.to_dict() for tag in self.tags],
+            "addOns": [add_on.to_dict() for add_on in self.add_ons],
+            "linked": [link.to_dict() for link in self.linked],
         }
 
 
@@ -321,8 +557,7 @@ class ProductItem(Item):
     checkout: Checkout
     calories: int | None
     is_out_of_stock: bool
-    # TODO
-    keywords: list[dict]
+    keywords: list[Keyword]
     course_id: int
     display_record_id: int
     alerts: None
@@ -343,7 +578,7 @@ class ProductItem(Item):
             checkout=Checkout.from_dict(data["checkout"]),
             calories=data["calories"],
             is_out_of_stock=data["isOutOfStock"],
-            keywords=data["keywords"],
+            keywords=[Keyword.from_dict(keyword) for keyword in data["keywords"]],
             course_id=data["courseId"],
             display_record_id=data["displayRecordId"],
             alerts=data["alerts"],
@@ -365,7 +600,7 @@ class ProductItem(Item):
             "checkout": self.checkout.to_dict(),
             "calories": self.calories,
             "isOutOfStock": self.is_out_of_stock,
-            "keywords": self.keywords,
+            "keywords": [keyword.to_dict() for keyword in self.keywords],
             "courseId": self.course_id,
             "displayRecordId": self.display_record_id,
             "alerts": self.alerts,
