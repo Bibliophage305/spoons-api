@@ -11,5 +11,9 @@ def all(max_age: datetime.timedelta | None = None) -> list[VenueSummary]:
     ]
 
 
-def get(venue_summary: VenueSummary, max_age: datetime.timedelta | None = None) -> Venue:
-    return Venue.from_dict(api.request(f"venues/{venue_summary.venue_ref}", max_age=max_age)["data"])
+def get(
+    venue_summary: VenueSummary, max_age: datetime.timedelta | None = None
+) -> Venue:
+    return Venue.from_dict(
+        api.request(f"venues/{venue_summary.venue_ref}", max_age=max_age)["data"]
+    )
