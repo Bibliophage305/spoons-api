@@ -32,4 +32,4 @@ Tests fetch real data via the repositories, deserialise into models, re-serialis
 
 - Calculate units of alcohol in each pitcher
 - Calculate units of alcohol in each double shot
-- Figure out how guest ales are represented (units/ABV aren't always available)
+- Figure out how to map guest ale pricing bands to actual prices
