@@ -790,24 +790,30 @@ class SubCategories:
     wo_white: str
     wo_red: str
     wo_rose: str
-    wo_sparkling: str
+    wo_sparkling: str | None
 
     @classmethod
     def from_dict(cls, data: dict) -> "SubCategories":
-        return cls(
-            wo_white=data["WO::white"],
-            wo_red=data["WO::red"],
-            wo_rose=data["WO::rose"],
-            wo_sparkling=data["WO::spark"],
-        )
+        try:
+            return cls(
+                wo_white=data["WO::white"],
+                wo_red=data["WO::red"],
+                wo_rose=data["WO::rose"],
+                wo_sparkling=data["WO::spark"] if "WO::spark" in data else None,
+            )
+        except KeyError as e:
+            print(data)
+            raise e
 
     def to_dict(self) -> dict:
-        return {
+        d = {
             "WO::white": self.wo_white,
             "WO::red": self.wo_red,
             "WO::rose": self.wo_rose,
-            "WO::spark": self.wo_sparkling,
         }
+        if self.wo_sparkling is not None:
+            d["WO::spark"] = self.wo_sparkling
+        return d
 
 
 @dataclass_validate
