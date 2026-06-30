@@ -1,0 +1,12 @@
+[project]
+name = "spoons-api"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.14"
+dependencies = [
+    "dataclass-type-validator>=0.1.2",
+    "peewee>=4.1.1",
+    "requests>=2.34.2",
+    "tenacity>=9.1.4",
+]
