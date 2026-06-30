@@ -76,7 +76,7 @@ class Drink:
     def __str__(self) -> str:
         return (
             f"{self.item_name} - {self.option_name} - {self.abv}% - "
-            f"{self.currency_symbol}{self.price} - {self.volume_ml}ml - "
+            f"{self.currency_symbol}{self.price:.2f} - {self.volume_ml}ml - "
             f"{self.currency_symbol}{self.cost_per_unit:.2f} per unit of alcohol"
         )
 
@@ -183,7 +183,7 @@ def _drinks_for_option(
             # Linked options are phrased like "x3 for £12.00": a multi-buy on
             # the same base drink at a discounted aggregate price.
             tokens = linked.name.lower().split()
-            multiplier = int(tokens[1])
+            multiplier = int(tokens[-3])
             multiple_price = float(tokens[-1][1:])
             drinks.append(
                 Drink(
