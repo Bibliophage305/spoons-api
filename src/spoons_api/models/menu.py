@@ -1,6 +1,8 @@
 from dataclasses import dataclass
 from dataclass_type_validator import dataclass_validate
 
+import re
+
 
 @dataclass_validate
 @dataclass
@@ -567,6 +569,11 @@ class ProductItem(Item):
     show_price: bool
     sales_area_id: None
 
+    @property
+    def abv(self) -> float:
+        abv_match = re.search(r"\d+\.?\d*(?=% abv)", self.description.lower())
+        return float(abv_match.group(0)) if abv_match else 0.0
+    
     @classmethod
     def from_dict(cls, data: dict) -> "ProductItem":
         return cls(
@@ -794,16 +801,12 @@ class SubCategories:
 
     @classmethod
     def from_dict(cls, data: dict) -> "SubCategories":
-        try:
-            return cls(
-                wo_white=data["WO::white"],
-                wo_red=data["WO::red"],
-                wo_rose=data["WO::rose"],
-                wo_sparkling=data["WO::spark"] if "WO::spark" in data else None,
-            )
-        except KeyError as e:
-            print(data)
-            raise e
+        return cls(
+            wo_white=data["WO::white"],
+            wo_red=data["WO::red"],
+            wo_rose=data["WO::rose"],
+            wo_sparkling=data["WO::spark"] if "WO::spark" in data else None,
+        )
 
     def to_dict(self) -> dict:
         d = {
