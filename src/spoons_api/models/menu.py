@@ -87,12 +87,6 @@ class Checkout:
 
 @dataclass_validate
 @dataclass
-class Keyword:
-    pass
-
-
-@dataclass_validate
-@dataclass
 class ValueChoice:
     choice_id: int
     portion_id: int
@@ -273,7 +267,7 @@ class Keyword:
             icon=data["icon"] if "icon" in data else None,
             icon_url=data["iconUrl"] if "iconUrl" in data else None,
         )
-    
+
     def to_dict(self) -> dict:
         d = {
             "type": self.type,
@@ -291,6 +285,7 @@ class Keyword:
         if self.icon_url is not None:
             d["iconUrl"] = self.icon_url
         return d
+
 
 @dataclass_validate
 @dataclass
@@ -477,10 +472,12 @@ class AddOn:
             name=data["name"],
             hidden=data["hidden"],
             sort_order=data["sortOrder"],
-            item_groups=[ItemGroup.from_dict(item_group) for item_group in data["itemGroups"]],
+            item_groups=[
+                ItemGroup.from_dict(item_group) for item_group in data["itemGroups"]
+            ],
             sub_categories=data["subCategories"] or None,
         )
-    
+
     def to_dict(self) -> dict:
         return {
             "id": self.id,
@@ -490,6 +487,7 @@ class AddOn:
             "itemGroups": [item_group.to_dict() for item_group in self.item_groups],
             "subCategories": self.sub_categories or [],
         }
+
 
 @dataclass_validate
 @dataclass
@@ -505,13 +503,14 @@ class Linked:
             category_id=data["categoryId"],
             name=data["name"],
         )
-    
+
     def to_dict(self) -> dict:
         return {
             "menuId": self.menu_id,
             "categoryId": self.category_id,
             "name": self.name,
         }
+
 
 @dataclass_validate
 @dataclass

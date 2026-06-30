@@ -1,7 +1,7 @@
-from repositories.venues import all as get_all_venues, get as get_venue
-from repositories.menus import all as get_all_menus, get as get_menu
-from models.venue import Venue, VenueSummary
-from models.menu import Menu, MenuSummary
+from spoons_api.repositories.venues import all as get_all_venues, get as get_venue
+from spoons_api.repositories.menus import all as get_all_menus, get as get_menu
+from spoons_api.models.venue import Venue, VenueSummary
+from spoons_api.models.menu import Menu, MenuSummary
 
 
 def main():

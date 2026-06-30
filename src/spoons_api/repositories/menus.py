@@ -1,5 +1,5 @@
-import api
-from models.menu import Menu, MenuSummary
+import spoons_api.api as api
+from spoons_api.models.menu import Menu, MenuSummary
 
 
 def all(franchise: str, venue_ref: int, sales_area_id: int) -> list[MenuSummary]:

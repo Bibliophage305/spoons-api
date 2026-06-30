@@ -3,7 +3,7 @@ import requests
 import tomllib
 import urllib.parse
 
-from cache import get_cached_response, cache_response
+from spoons_api.cache import get_cached_response, cache_response
 
 from tenacity import retry, wait_exponential, retry_if_exception
 

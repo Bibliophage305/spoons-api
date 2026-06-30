@@ -1,5 +1,5 @@
-import api
-from models.venue import Venue, VenueSummary
+import spoons_api.api as api
+from spoons_api.models.venue import Venue, VenueSummary
 
 
 def all() -> list[VenueSummary]:
